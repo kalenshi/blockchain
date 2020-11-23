@@ -4,8 +4,12 @@
   "description": "first feet into block chain programming",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dev/api.js"
   },
   "author": "Kalenshi Katebe",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6"
+  }
 }
