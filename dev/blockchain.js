@@ -1,10 +1,13 @@
 
+const sha256 = require('sha256');
+
 /**
  * 
  */
-function Blockchian(){
+function Blockchain(){
     this.chain = [];
     this.pendingTransactions = [];
+    this.createNewBlock(Math.floor(Math.random() * Math.floor(1000)), sha256('create'), sha256('genesis'));
 }
 /**
  * 
@@ -12,7 +15,7 @@ function Blockchian(){
  * @param {*} previousBlockHash  data from the previous block hashed into a string
  * @param {*} hash all the transactions will be hashed to create a new hash that is passed into this function
  */
-Blockchian.prototype.createNewBlock = function(nonce, previousBlockHash, hash){
+Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash){
     const newBlock = {
         index: this.chain.length + 1,
         timestamp: Date.now(),
@@ -30,7 +33,7 @@ Blockchian.prototype.createNewBlock = function(nonce, previousBlockHash, hash){
 /**
  * Retrieve and return the last block in the block chain
  */
-Blockchian.prototype.getLastBlock = function(){
+Blockchain.prototype.getLastBlock = function(){
     return this.chain[this.chain.length-1];
 }
 
@@ -44,7 +47,7 @@ Blockchian.prototype.getLastBlock = function(){
  * @param {*} recipient the address of the recipient
  * @returns the index of the block where this transaction can be found
  */
-Blockchian.prototype.createNewTransaction = function(amount, sender, recipient){
+Blockchain.prototype.createNewTransaction = function(amount, sender, recipient){
     const newTransaction = {
         amount: amount,
         sender: sender,
@@ -53,5 +56,28 @@ Blockchian.prototype.createNewTransaction = function(amount, sender, recipient){
     this.pendingTransactions.push(newTransaction);
     return this.getLastBlock()['index'] + 1;
 }
+/**
+ * 
+ * @param {*} previousBlockHash 
+ * @param {*} currentBlockData 
+ * @param {*} nonce 
+ */
+Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, nonce) {
+    const dataAsString = `${previousBlockHash}${JSON.stringify(currentBlockData)}${nonce.toString()}`;
+    return sha256(dataAsString);
+}
+/**
+ * 
+ * @param {*} previousBlockHash 
+ * @param {*} currentBlockData 
+ */
+Blockchain.prototype.proofOfWork = function(previousBlockHash ,currentBlockData) {
+    let nounce = 0;
+    let hash = this.hashBlock(previousBlockHash, currentBlockData, nounce);
+    while(!proofOfWork.startsWith('0000')){
+        hash = this.hashBlock(previousBlockHash, currentBlockData, ++nounce);
+    }
+    return nounce;
+}
 
-module.exports =  Blockchian;
+module.exports =  Blockchain;
