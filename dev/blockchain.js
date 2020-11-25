@@ -1,5 +1,6 @@
 
 const sha256 = require('sha256');
+const currentUrl = process.argv[3];
 
 /**
  * 
@@ -7,6 +8,11 @@ const sha256 = require('sha256');
 function Blockchain(){
     this.chain = [];
     this.pendingTransactions = [];
+
+    this.currentUrl = currentUrl;
+    this.networkNodes = [];
+
+    //genesis block
     this.createNewBlock(Math.floor(Math.random() * Math.floor(1000)), sha256('create'), sha256('genesis'));
 }
 /**
@@ -19,7 +25,7 @@ Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash){
     const newBlock = {
         index: this.chain.length + 1,
         timestamp: Date.now(),
-        pendingTransactions: this.pendingTransactions,
+        transactions: this.pendingTransactions,
         nonce: nonce, 
         hash: hash, 
         previousBlockHash: previousBlockHash, 
@@ -72,12 +78,12 @@ Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, n
  * @param {*} currentBlockData 
  */
 Blockchain.prototype.proofOfWork = function(previousBlockHash ,currentBlockData) {
-    let nounce = 0;
-    let hash = this.hashBlock(previousBlockHash, currentBlockData, nounce);
-    while(!proofOfWork.startsWith('0000')){
-        hash = this.hashBlock(previousBlockHash, currentBlockData, ++nounce);
+    let nonce = 0;
+    let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+    while(!hash.startsWith('0000')){
+        hash = this.hashBlock(previousBlockHash, currentBlockData, ++nonce);
     }
-    return nounce;
+    return nonce;
 }
 
 module.exports =  Blockchain;
